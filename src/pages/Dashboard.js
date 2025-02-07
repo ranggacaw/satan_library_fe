@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 import axios from 'axios';
-import { MdDeleteOutline } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { GiClick } from 'react-icons/gi';
 
 const Dashboard = () => {
     const [books, setBooks] = useState([]);
@@ -59,6 +57,7 @@ const Dashboard = () => {
             console.error('Error deleting book:', error);
         }
     }
+
     return (
         <>
             <Navbar/>
@@ -84,13 +83,13 @@ const Dashboard = () => {
                                             to={`/details-book/${item.id}`}
                                             className='px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white transition duration-100 rounded-lg me-1'
                                         >
-                                            <GiClick/>
+                                            Details
                                         </Link>
                                         <Link 
                                             type='button'
                                             onClick={() => handleDelete(item.id)}
                                             className='px-4 py-2 bg-red-700 hover:bg-red-800 text-white transition duration-100 rounded-lg'>
-                                            <MdDeleteOutline/>
+                                            Delete
                                         </Link>
                                     </>
                                 )}

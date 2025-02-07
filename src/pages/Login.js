@@ -28,39 +28,39 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
-
+    
         try {
-        const response = await axios.post('http://localhost:3001/auth/login', {
-            email,
-            password,
-        });
-
-        if (response.data) {
-            const token = response.data.token;
-            const user_id = response.data.user_id;
-            
-            localStorage.setItem("token", token); 
-            localStorage.setItem("user_id", user_id); 
-            setIsLoggedIn(true); 
-
-            Swal.fire({
-            title: "Yeah Dude!",
-            text: response.data.message,
-            icon: "success",
-            confirmButtonText: "OK",
-            })
-            // console.log("user nya: ", user_id);
-            
-        } else {
-            alert("Login failed!");
-        }
-
-        // Redirect ke dashboard
-        navigate('/');
+            const response = await axios.post('http://localhost:3001/auth/login', {
+                email,
+                password,
+            });
+    
+            if (response.data) {
+                const token = response.data.token;
+                const user_id = response.data.user_id;
+    
+                localStorage.setItem("token", token); 
+                localStorage.setItem("user_id", user_id); // Check if this is correctly set
+    
+                setIsLoggedIn(true); 
+    
+                console.log("Stored user_id:", user_id); // Debugging log
+    
+                Swal.fire({
+                    title: "Yeah Dude!",
+                    text: response.data.message,
+                    icon: "success",
+                    confirmButtonText: "OK",
+                });
+    
+            } else {
+                alert("Login failed!");
+            }
+    
+            navigate('/'); // Redirect after login
         } catch (error) {
-        console.error("Error during login:", error);
-        alert("An error occurred. Please try again.");
-        console.error(error);
+            console.error("Error during login:", error);
+            alert("An error occurred. Please try again.");
         }
     };
 

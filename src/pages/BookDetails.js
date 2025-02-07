@@ -39,23 +39,40 @@ const BookDetails = () => {
     // Handle Save Click
     const handleSave = async () => {
         try {
+            const token = localStorage.getItem("token");
+            const userId = localStorage.getItem("user_id"); // Ensure userId is correctly retrieved
+    
+            console.log("Updating book:", { id, title: book.title, content: editedContent, userId });
+    
+            if (!userId || userId === "undefined") {
+                throw new Error("User ID is missing from localStorage.");
+            }
+    
+            // Ensure userId is included in the update request
+            const updatedData = {
+                title: book.title,
+                content: editedContent,
+                userId: parseInt(userId, 10), // Convert userId to an integer
+            };
+    
             const response = await fetch(`http://localhost:3001/books/${id}`, {
                 method: 'PUT', // Use PUT method for updates
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ content: editedContent }),
+                body: JSON.stringify(updatedData),
             });
-
+    
             if (!response.ok) throw new Error('Failed to update content');
-
+    
             const updatedBook = await response.json();
-            setBook(updatedBook); // Update state with new content
+            setBook(updatedBook.mysqlData); // Update state with new content
             setIsEditing(false); // Exit editing mode
         } catch (err) {
             setError(err.message);
         }
-    };
+    }
 
     // Handle Cancel Click
     const handleCancel = () => {
@@ -90,10 +107,10 @@ const BookDetails = () => {
                     {/* Book Details */}
                     <div className="mt-4 text-gray-700 space-y-2">
                         <p className="font-medium">
-                            <span className="text-gray-900">Author:</span> {book.author}
+                            <span className="text-gray-900">Author:</span> 
                         </p>
                         <p className="font-medium">
-                            <span className="text-gray-900">Published:</span> {book.publishedDate}
+                            <span className="text-gray-900">Published:</span>
                         </p>
                     </div>
 
