@@ -10,6 +10,7 @@ const BookDetails = () => {
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false); // Track editing state
     const [editedContent, setEditedContent] = useState(''); // Store edited content
+    const token = localStorage.getItem("token");
 
     // Fetch book details
     useEffect(() => {
@@ -116,29 +117,29 @@ const BookDetails = () => {
 
                     {/* Action Buttons */}
                     <div className="mt-6 flex justify-end space-x-3">
-                        {isEditing ? (
-                            <>
-                                <button
-                                    onClick={handleSave}
-                                    className="px-5 py-2 bg-green-600 text-white font-medium rounded-lg shadow-md hover:bg-green-700 transition"
-                                >
-                                    Save
-                                </button>
-                                <button
-                                    onClick={handleCancel}
-                                    className="px-5 py-2 bg-gray-500 text-white font-medium rounded-lg shadow-md hover:bg-gray-600 transition"
-                                >
-                                    Cancel
-                                </button>
-                            </>
-                        ) : (
+                    {isEditing ? (
+                        <>
                             <button
-                                onClick={handleEdit}
-                                className="px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition"
+                                onClick={handleSave}
+                                className="px-5 py-2 bg-green-600 text-white font-medium rounded-lg shadow-md hover:bg-green-700 transition"
                             >
-                                Edit
+                                Save
                             </button>
-                        )}
+                            <button
+                                onClick={handleCancel}
+                                className="px-5 py-2 bg-gray-500 text-white font-medium rounded-lg shadow-md hover:bg-gray-600 transition"
+                            >
+                                Cancel
+                            </button>
+                        </>
+                    ) : token ? (  // ✅ Fixed condition without extra {}
+                        <button
+                            onClick={handleEdit}
+                            className="px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition"
+                        >
+                            Edit
+                        </button>
+                    ) : null}
                     </div>
                 </div>
             </div>

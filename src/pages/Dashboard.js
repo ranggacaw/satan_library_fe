@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
     const [books, setBooks] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
     const token = localStorage.getItem('token');
 
     // Fetching data dari API
@@ -58,49 +59,68 @@ const Dashboard = () => {
         }
     }
 
+    // Filter books based on search query
+    const filteredBooks = books.filter(book =>
+        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.content.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <>
             <Navbar/>
             
-            <main className="flex-grow h-screen">
-                <div className="container mx-auto px-4 py-8">
-                <h2 className="text-3xl font-semibold text-gray-800 mb-6">Find Your Book</h2>
+            <main className="flex flex-col min-h-screen">
+                <div className="flex-grow container mx-auto px-4 py-8">
+                    <h2 className="text-3xl font-semibold text-gray-800 mb-6">Find Your Book</h2>
+                    {/* Search Input */}
+                    <input
+                        type="text"
+                        placeholder="Search books..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg mb-14"
+                    />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {books.length > 0 ? (
-                        books.map(item => (
-                            <div
-                                key={item.id}
-                                className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow duration-300"
-                            >
-                                <h3 className="text-lg font-semibold text-gray-800 mb-3">{item.title}</h3>
-                                <p className='mb-3'>{item.content}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {filteredBooks.length > 0 ? (
+                            filteredBooks.map(item => (
+                                <div
+                                    key={item.id}
+                                    className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
+                                >
+                                    {/* Title & Content */}
+                                    <div className="flex-grow">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-3">{item.title}</h3>
+                                        <p className="mb-3">{item.content}</p>
+                                    </div>
 
-                                {token && (
-                                    <>
+                                    {/* Footer: Buttons always at the bottom */}
+                                    <div className="mt-auto flex justify-between items-center pt-4">
                                         <Link 
-                                            type='button'
                                             to={`/details-book/${item.id}`}
-                                            className='px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white transition duration-100 rounded-lg me-1'
+                                            className="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white transition duration-100 rounded-lg"
                                         >
-                                            Details
+                                            Read More
                                         </Link>
-                                        <Link 
-                                            type='button'
-                                            onClick={() => handleDelete(item.id)}
-                                            className='px-4 py-2 bg-red-700 hover:bg-red-800 text-white transition duration-100 rounded-lg'>
-                                            Delete
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-gray-500 text-center col-span-full">
-                            No content available.
-                        </p>
-                    )}
-                </div>
+                                        
+                                        {token && (
+                                            <button 
+                                                onClick={() => handleDelete(item.id)}
+                                                className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white transition duration-100 rounded-lg"
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                            ))
+                        ) : (
+                            <p className="text-gray-500 text-center col-span-full">
+                                No content available.
+                            </p>
+                        )}
+                    </div>
                 </div>
             </main>
 
