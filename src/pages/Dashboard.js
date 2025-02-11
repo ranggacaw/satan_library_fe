@@ -50,7 +50,7 @@ const Dashboard = () => {
                 }
             )
 
-            // Remove the deleted book from the UI
+            // Remove deleted book dari dahboard
             setBooks(prevData => prevData.filter(book => book.id !== id));
 
             console.log("Book deleted successfully:", response.data);

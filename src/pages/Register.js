@@ -15,7 +15,7 @@ function Register() {
     const navigate = useNavigate();
 
     const passwordVisibility = () => {
-        setShowPassword((prevState) => !prevState);
+        setShowPassword((prevState) => !prevState); // Merubah state untuk visibility password
     };
 
     const validateEmail = (email) => {
@@ -37,13 +37,13 @@ function Register() {
         }
     
         try {
-            // Register user with Firebase Authentication
+            // Register firebase
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user; // Firebase returns user object
     
-            // Send user data to backend
+            // Register ke backend
             await axios.post("http://localhost:3001/auth/register", {
-                uid: user.uid, // Firebase UID
+                uid: user.uid, // Firebase uid
                 email,
                 name,
                 password,
