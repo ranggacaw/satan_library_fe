@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import Swal from 'sweetalert2';
 
@@ -71,7 +71,7 @@ function Login() {
 
     return (
         <>
-            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="flex items-center justify-center min-h-screen bg-gray-100 font-serif">
                 {!isLoggedIn ? (
                     <form
                             onSubmit={handleLogin}
@@ -92,7 +92,7 @@ function Login() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300 focus:outline-none"
                             />
                         </div>
                         <div className="mb-4">
@@ -107,35 +107,31 @@ function Login() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300 focus:outline-none"
                                 />
-                                <p className="text-sm text-right text-blue-500 hover:underline cursor-pointer">
-                                    <a href="#">Forgot Password?</a>
+                                <p className="text-sm text-right text-yellow-500 hover:underline cursor-pointer">
+                                    <Link to="#">Forgot Password?</Link>
                                 </p>
                                 <button
                                     type="button"
                                     onClick={passwordVisibillity}
                                     className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
                                 >
-                                    {showPassword ? (
-                                        <IoEyeOutline />
-                                        ) : (
-                                        <IoEyeOffOutline />
-                                    )}
+                                    {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
                                 </button>
                             </div>
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="w-full bg-yellow-300 text-gray-700 py-2 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         >
                             Login
                         </button>
                         <p className="text-sm text-center text-gray-600 mt-4">
                             Don't have an account?{" "}
                             <a
-                            href="/register"
-                            className="text-blue-500 hover:underline"
+                                href="/register"
+                                className="text-yellow-500 hover:underline"
                             >
                             Register
                             </a>

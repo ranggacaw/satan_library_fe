@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -79,7 +78,7 @@ const AddBook = () => {
                 throw new Error("User ID is not set correctly.");
             }
     
-            // ✅ Only send data to the backend, let backend handle Firestore
+            // send data to the backend, let backend handle Firestore
             const response = await axios.post('http://localhost:3001/books/', {
                 ...form,
                 userId, // Ensure userId is included
@@ -116,54 +115,56 @@ const AddBook = () => {
     return (
         <>
             <Navbar />
-            <div className="w-full min-h-screen flex items-center justify-center bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8 sm:p-10">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-800 text-center">
-                        Add New Book
+            <div className="w-full min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
+                <div className="max-w-2xl w-full bg-white shadow-2xl rounded-xl border border-gray-200 p-10">
+                    
+                    {/* Book-Like Header */}
+                    <h2 className="text-4xl font-serif font-bold text-gray-900 text-center">
+                        Add a New Book
                     </h2>
-                    <form onSubmit={handleSubmit} className="space-y-8">
+                    <p className="text-gray-600 text-center mt-2 text-lg">
+                        Fill in the details below to add a book to the library.
+                    </p>
+
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="mt-6 space-y-6 font-serif">
+                        
                         {/* Title Input */}
                         <div>
-                            <label htmlFor="title" className="block text-lg font-medium text-gray-700 mb-2">
-                                Title
-                            </label>
+                            <label className="text-lg font-medium text-gray-800">Title</label>
                             <input
-                                id="title"
-                                name="title"
                                 type="text"
+                                name="title"
                                 value={form.title}
                                 onChange={handleChange}
-                                className="w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-base"
-                                placeholder="Enter the title here"
+                                className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                placeholder="Enter book title"
                             />
-                            {error.title && <p className="mt-2 text-sm text-red-600">{error.title}</p>}
+                            {error.title && <p className="mt-1 text-red-600">{error.title}</p>}
                         </div>
 
                         {/* Content Textarea */}
                         <div>
-                            <label htmlFor="content" className="block text-lg font-medium text-gray-700 mb-2">
-                                Synopsis
-                            </label>
+                            <label className="text-lg font-medium text-gray-800">Synopsis</label>
                             <textarea
-                                id="content"
                                 name="content"
                                 value={form.content}
                                 onChange={handleChange}
-                                rows="8"
-                                className="w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-base"
-                                placeholder="Enter synopsis here"
-                            ></textarea>
-                            {error.content && <p className="mt-2 text-sm text-red-600">{error.content}</p>}
+                                rows="6"
+                                className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                placeholder="Write a short description of the book..."
+                            />
+                            {error.content && <p className="mt-1 text-red-600">{error.content}</p>}
                         </div>
 
                         {/* Submit Button */}
                         <div className="text-center">
                             <button
                                 type="submit"
-                                className="w-full bg-blue-600 text-white text-lg font-medium py-4 rounded-lg shadow-md hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition duration-300"
+                                className="btn btn-primary w-full"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? 'Submitting...' : 'Add Article'}
+                                {isSubmitting ? "Submitting..." : "Add Book"}
                             </button>
                         </div>
                     </form>
@@ -171,24 +172,21 @@ const AddBook = () => {
 
                 {/* Confirmation Modal */}
                 {isModalOpen && (
-                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
-                            <p className="text-lg font-semibold text-center text-gray-800">
-                                Book Added Successfully!
+                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                        <div className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+                            <p className="text-lg font-semibold text-gray-800">
+                                ✅ Book Added Successfully!
                             </p>
-                            <div className="mt-4 flex justify-center">
-                                <button
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition duration-300"
-                                >
-                                    Close
-                                </button>
-                            </div>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="btn btn-success mt-4"
+                            >
+                                Close
+                            </button>
                         </div>
                     </div>
                 )}
             </div>
-            <Footer />
         </>
     );
 };

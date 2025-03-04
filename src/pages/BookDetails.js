@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 
 const BookDetails = () => {
     const { id } = useParams(); // Get book ID from URL
@@ -89,62 +88,74 @@ const BookDetails = () => {
         <>
             <Navbar />
 
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="max-w-2xl w-full p-6 bg-white shadow-lg rounded-2xl border border-gray-200">
-                    <h1 className="text-3xl font-bold text-gray-900">{book.title}</h1>
-
-                    {/* Content Section */}
-                    {isEditing ? (
-                        <textarea
-                            className="w-full mt-4 p-3 border border-gray-300 rounded-lg"
-                            value={editedContent}
-                            onChange={(e) => setEditedContent(e.target.value)}
-                            rows="5"
-                        />
-                    ) : (
-                        <p className="text-gray-500 mt-2 italic">{book.content}</p>
+            <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-12">
+                <div className="max-w-3xl w-full bg-white shadow-2xl rounded-xl border border-gray-300 relative p-8">
+                    
+                    {/* Book Cover */}
+                    {book.coverImage && (
+                        <div className="w-full h-64 bg-gray-200 rounded-md overflow-hidden mb-6 shadow-lg">
+                            <img 
+                                src={book.coverImage} 
+                                alt={book.title} 
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                     )}
 
-                    {/* Book Details */}
-                    <div className="mt-4 text-gray-700 space-y-2">
-                        <p className="font-medium">
-                            <span className="text-gray-900">Author:</span> 
-                        </p>
-                        <p className="font-medium">
-                            <span className="text-gray-900">Published:</span>
-                        </p>
+                    {/* Book Title */}
+                    <h1 className="text-4xl font-serif font-bold text-gray-900">
+                        {book.title}
+                    </h1>
+
+                    {/* Content Section (Reading Mode) */}
+                    <div className="mt-6 bg-gray-50 p-6 rounded-md shadow-inner">
+                        {isEditing ? (
+                            <textarea
+                                className="w-full h-48 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                value={editedContent}
+                                onChange={(e) => setEditedContent(e.target.value)}
+                            />
+                        ) : (
+                            <p className="text-lg leading-relaxed text-gray-700">
+                                {book.content}
+                            </p>
+                        )}
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="mt-6 flex justify-end space-x-3">
-                    {isEditing ? (
-                        <>
+                    {/* Book Details */}
+                    <div className="mt-6 text-gray-700 text-sm space-y-2 italic">
+                        <p><span className="font-semibold text-gray-900">Author:</span> {book.author || "Unknown"}</p>
+                        <p><span className="font-semibold text-gray-900">Published:</span> {book.publishedDate || "Not available"}</p>
+                    </div>
+
+                    {/* Floating Bookmark Edit Button */}
+                    <div className="absolute top-5 right-5">
+                        {isEditing ? (
+                            <>
+                                <button
+                                    onClick={handleSave}
+                                    className="btn btn-success mr-2 shadow-md"
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    onClick={handleCancel}
+                                    className="btn btn-neutral shadow-md"
+                                >
+                                    Cancel
+                                </button>
+                            </>
+                        ) : token ? (
                             <button
-                                onClick={handleSave}
-                                className="px-5 py-2 bg-green-600 text-white font-medium rounded-lg shadow-md hover:bg-green-700 transition"
+                                onClick={handleEdit}
+                                className="btn btn-primary shadow-md"
                             >
-                                Save
+                                Edit
                             </button>
-                            <button
-                                onClick={handleCancel}
-                                className="px-5 py-2 bg-gray-500 text-white font-medium rounded-lg shadow-md hover:bg-gray-600 transition"
-                            >
-                                Cancel
-                            </button>
-                        </>
-                    ) : token ? (  // ✅ Fixed condition without extra {}
-                        <button
-                            onClick={handleEdit}
-                            className="px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition"
-                        >
-                            Edit
-                        </button>
-                    ) : null}
+                        ) : null}
                     </div>
                 </div>
             </div>
-            
-            <Footer />
         </>
     );
 };
