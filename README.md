@@ -4,6 +4,8 @@
 I using Nextjs Typescript + [DaisyUI](https://daisyui.com/) + [Tailwindcss](https://tailwindcss.com/) for styling.
 
 learning Reactjs for the last 3 month and try to make simple crud application.
+
+In this application, I tried to build with 2 database(offline and online) mysql and firestore. So, when registered it recorded in mysql and firestoreAuth.
 ## Available Scripts
 
 In the project directory, you can run:
