@@ -110,7 +110,7 @@ function Login() {
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300 focus:outline-none"
                                 />
                                 <p className="text-sm text-right text-yellow-500 hover:underline cursor-pointer">
-                                    <Link to="#">Forgot Password?</Link>
+                                    <Link to="/forgot-password">Forgot Password?</Link>
                                 </p>
                                 <button
                                     type="button"

@@ -31,7 +31,7 @@ const Navbar = () => {
                     {isLoggedIn ? (
                         <button onClick={handleLogout} className="btn btn-error text-gray-700">Logout</button>
                     ) : (
-                        <Link to="/login" className="btn btn-primary">Login</Link>
+                        <Link to="/login" className="btn btn-primary text-gray-700">Login</Link>
                     )}
                 </div>
 
@@ -62,7 +62,7 @@ const Navbar = () => {
                     {isLoggedIn ? (
                         <button onClick={handleLogout} className="btn btn-error w-full text-gray-700">Logout</button>
                     ) : (
-                        <Link to="/login" className="btn btn-primary w-full">Login</Link>
+                        <Link to="/login" className="btn btn-primary w-full text-gray-700">Login</Link>
                     )}
                 </div>
             )}

@@ -7,6 +7,7 @@ import AddBook from './pages/BookCreate';
 import BookDetails from './pages/BookDetails';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                 <Route path='/register' element={<Register/>}/>
                 <Route path='/add-book' element={<AddBook/>}/>
                 <Route path='/details-book/:id' element={<BookDetails/>}/>
+                <Route path="/forgot-password" element={<ForgotPassword />} />
             </Routes> 
         </Router>
     );
