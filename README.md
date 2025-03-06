@@ -13,7 +13,7 @@ With following features:
   - Book details
   - Delete Book
   - Search/Finding Book based on Tittle and Content
-  - Forgot password (for firebase only)
+  - Forgot password (firebase only)
     
 ## Available Scripts
 
