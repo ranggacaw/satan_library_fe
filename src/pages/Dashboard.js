@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
+import BookSlider from "../components/BookSlider";
 
 const HomePage = () => {
     const [books, setBooks] = useState([]);
@@ -14,20 +14,6 @@ const HomePage = () => {
     const [totalPages, setTotalPages] = useState(1);
     const token = localStorage.getItem("token");
     const limit = 8;
-
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 3000,
-        responsive: [
-            { breakpoint: 1024, settings: { slidesToShow: 2 } },
-            { breakpoint: 768, settings: { slidesToShow: 1 } },
-        ],
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -72,7 +58,6 @@ const HomePage = () => {
             book.content.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const featuredBooks = books.slice(0, 3);
 
     return (
         <>
@@ -98,29 +83,7 @@ const HomePage = () => {
             </section>
 
             {/* Book Slider */}
-            <section className="py-12 bg-gray-950 font-serif">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-2xl font-bold text-white text-center mb-2">Featured Books</h2>
-                    <p className="text-gray-400 text-center">Discover our handpicked selection of must-read books.</p>
-                    {featuredBooks.length > 0 ? (
-                        <Slider {...settings}>
-                            {featuredBooks.map((book) => (
-                            <div key={book.id} className="p-4">
-                                <div className="bg-gray-900 shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
-                                    <h3 className="text-lg font-semibold text-white mb-2">{book.title}</h3>
-                                    <p className="text-gray-400 mb-3">{book.content.substring(0, 80)}...</p>
-                                    <Link to={`/details-book/${book.id}`} className="text-yellow-300 hover:underline">
-                                        Read More →
-                                    </Link>
-                                </div>
-                            </div>
-                            ))}
-                        </Slider>
-                    ) : (
-                        <p className="text-gray-500">No featured books available.</p>
-                    )}
-                </div>
-            </section>
+            <BookSlider />
 
             {/* Search & Book List */}
             <section className="container mx-auto px-4 py-16 font-serif">
