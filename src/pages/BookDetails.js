@@ -10,26 +10,36 @@ const BookDetails = () => {
     const [isEditing, setIsEditing] = useState(false); // Track editing state
     const [editedContent, setEditedContent] = useState(''); // Store edited content
     const token = localStorage.getItem("token");
+    const [isSaving, setIsSaving] = useState(false);
 
     // Fetch book details
     useEffect(() => {
         const fetchBookDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/books/${id}`);
-                if (!response.ok) throw new Error('Failed to fetch book details');
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) {
+                    headers.Authorization = `Bearer ${token}`;
+                }
 
+                const response = await fetch(`http://localhost:3001/books/${id}`, {
+                    method: "GET",
+                    headers
+                });
+    
+                if (!response.ok) throw new Error('Failed to fetch book details');
+    
                 const data = await response.json();
                 setBook(data);
-                setEditedContent(data.content); // Initialize content for editing
+                setEditedContent(data.content || ""); // Initialize content for editing
             } catch (err) {
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchBookDetails();
-    }, [id]);
+    }, [id, token]); // Added token to dependencies
 
     // Handle Edit Click
     const handleEdit = () => {
@@ -38,6 +48,7 @@ const BookDetails = () => {
 
     // Handle Save Click
     const handleSave = async () => {
+        setIsSaving(true);
         try {
             const token = localStorage.getItem("token");
             const userId = localStorage.getItem("user_id"); // Ensure userId is correctly retrieved
@@ -52,11 +63,12 @@ const BookDetails = () => {
             const updatedData = {
                 title: book.title,
                 content: editedContent,
+                imageUrl: book.imageUrl, // Keep existing imageUrl
                 userId: parseInt(userId, 10), // Convert userId to an integer
             };
     
             const response = await fetch(`http://localhost:3001/books/${id}`, {
-                method: 'PUT', // Use PUT method for updates
+                method: 'PATCH', // Use PUT method for updates
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -71,6 +83,8 @@ const BookDetails = () => {
             setIsEditing(false); // Exit editing mode
         } catch (err) {
             setError(err.message);
+        } finally {
+            setIsSaving(false);
         }
     }
 
@@ -89,43 +103,59 @@ const BookDetails = () => {
             <Navbar />
 
             <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-12">
-                <div className="max-w-3xl w-full bg-white shadow-2xl rounded-xl border border-gray-300 relative p-8">
-                    
-                    {/* Book Cover */}
-                    {book.coverImage && (
-                        <div className="w-full h-64 bg-gray-200 rounded-md overflow-hidden mb-6 shadow-lg">
-                            <img 
-                                src={book.coverImage} 
-                                alt={book.title} 
-                                className="w-full h-full object-cover"
-                            />
+                <div className="max-w-6xl w-full bg-white shadow-2xl rounded-xl border border-gray-300 relative p-8">
+                    {/* Grid Container */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Left Column: Image */}
+                        <div className="flex items-center justify-center">
+                            {book.imageUrl ? (
+                                <img
+                                    src={book.imageUrl}
+                                    alt={book.title}
+                                    className="w-full h-auto max-h-96 object-contain rounded-lg shadow-md"
+                                    onError={() => console.error("Failed to load image")} // Fallback if image fails to load
+                                />
+                            ) : (
+                                <div className="w-full h-64 bg-gray-300 flex items-center justify-center text-gray-500 rounded-lg">
+                                    No Image Available
+                                </div>
+                            )}
                         </div>
-                    )}
 
-                    {/* Book Title */}
-                    <h1 className="text-4xl font-serif font-bold text-gray-900">
-                        {book.title}
-                    </h1>
+                        {/* Right Column: Content */}
+                        <div className="flex flex-col justify-between">
+                            {/* Book Title */}
+                            <h1 className="text-4xl font-serif font-bold text-gray-900 mb-6">
+                                {book.title}
+                            </h1>
 
-                    {/* Content Section (Reading Mode) */}
-                    <div className="mt-6 bg-gray-50 p-6 rounded-md shadow-inner">
-                        {isEditing ? (
-                            <textarea
-                                className="w-full h-48 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                value={editedContent}
-                                onChange={(e) => setEditedContent(e.target.value)}
-                            />
-                        ) : (
-                            <p className="text-lg leading-relaxed text-gray-700">
-                                {book.content}
-                            </p>
-                        )}
-                    </div>
+                            {/* Content Section (Reading Mode) */}
+                            <div className="bg-gray-50 p-6 rounded-md shadow-inner">
+                                {isEditing ? (
+                                    <textarea
+                                        className="w-full h-screen p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        value={editedContent}
+                                        onChange={(e) => setEditedContent(e.target.value)}
+                                    />
+                                ) : (
+                                    <p className="text-lg leading-relaxed text-gray-700">
+                                        {book.content}
+                                    </p>
+                                )}
+                            </div>
 
-                    {/* Book Details */}
-                    <div className="mt-6 text-gray-700 text-sm space-y-2 italic">
-                        <p><span className="font-semibold text-gray-900">Author:</span> {book.author || "Unknown"}</p>
-                        <p><span className="font-semibold text-gray-900">Published:</span> {book.publishedDate || "Not available"}</p>
+                            {/* Book Details */}
+                            <div className="mt-6 text-gray-700 text-sm space-y-2 italic">
+                                <p>
+                                    <span className="font-semibold text-gray-900">Author:</span>{" "}
+                                    {book.author || "Unknown"}
+                                </p>
+                                <p>
+                                    <span className="font-semibold text-gray-900">Published:</span>{" "}
+                                    {book.publishedDate || "Not available"}
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Floating Bookmark Edit Button */}
@@ -135,8 +165,9 @@ const BookDetails = () => {
                                 <button
                                     onClick={handleSave}
                                     className="btn btn-success mr-2 shadow-md"
+                                    disabled={isSaving}
                                 >
-                                    Save
+                                    {isSaving ? "Saving..." : "Save"}
                                 </button>
                                 <button
                                     onClick={handleCancel}

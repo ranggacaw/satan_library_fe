@@ -10,7 +10,10 @@ import axios from "axios";
 const HomePage = () => {
     const [books, setBooks] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const token = localStorage.getItem("token");
+    const limit = 8;
 
     const settings = {
         dots: true,
@@ -26,28 +29,27 @@ const HomePage = () => {
         ],
     };
 
-    // Fetching data from API
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/books", {
+                const response = await axios.get(`http://localhost:3001/books?page=${page}&limit=${limit}`, {
                     headers: {
                         "ngrok-skip-browser-warning": "1",
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
+                setBooks(response.data.books);
+                setTotalPages(response.data.totalPages);
                 console.log("Fetched books:", response.data);
-                setBooks(Array.isArray(response.data) ? response.data : []);
             } catch (error) {
                 console.error("Error fetching books:", error);
             }
         };
 
         fetchData();
-    }, [token]);
+    }, [token, page]);
 
-    // Handle book deletion
     const handleDelete = async (id) => {
         try {
             await axios.delete(`http://localhost:3001/books/${id}`, {
@@ -64,15 +66,13 @@ const HomePage = () => {
         }
     };
 
-    // Filter books based on search query
     const filteredBooks = books.filter(
         (book) =>
             book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             book.content.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Limit books for the slider
-    const featuredBooks = books.slice(0, 6);
+    const featuredBooks = books.slice(0, 3);
 
     return (
         <>
@@ -100,39 +100,24 @@ const HomePage = () => {
             {/* Book Slider */}
             <section className="py-12 bg-gray-950 font-serif">
                 <div className="container mx-auto px-4">
-                    {/* Heading and Description */}
-                    <div className="text-center mb-8">
-                        <h2 className="text-2xl font-bold text-white mb-2">Featured Books</h2>
-                        <p className="text-gray-400">
-                            Discover our handpicked selection of must-read books.
-                        </p>
-                    </div>
-
-                    {/* Slider */}
+                    <h2 className="text-2xl font-bold text-white text-center mb-2">Featured Books</h2>
+                    <p className="text-gray-400 text-center">Discover our handpicked selection of must-read books.</p>
                     {featuredBooks.length > 0 ? (
                         <Slider {...settings}>
                             {featuredBooks.map((book) => (
                             <div key={book.id} className="p-4">
-                                {/* Book Card */}
                                 <div className="bg-gray-900 shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
-                                    <h3 className="text-lg font-semibold text-white mb-2">
-                                        {book.title}
-                                    </h3>
-                                    <p className="text-gray-400 mb-3">
-                                        {book.content.substring(0, 80)}...
-                                    </p>
-                                    <Link
-                                        to={`/details-book/${book.id}`}
-                                        className="btn text-gray-300"
-                                    >
-                                        Read More
+                                    <h3 className="text-lg font-semibold text-white mb-2">{book.title}</h3>
+                                    <p className="text-gray-400 mb-3">{book.content.substring(0, 80)}...</p>
+                                    <Link to={`/details-book/${book.id}`} className="text-yellow-300 hover:underline">
+                                        Read More →
                                     </Link>
                                 </div>
                             </div>
                             ))}
                         </Slider>
                     ) : (
-                        <p className="text-gray-500 text-center">No featured books available.</p>
+                        <p className="text-gray-500">No featured books available.</p>
                     )}
                 </div>
             </section>
@@ -142,37 +127,27 @@ const HomePage = () => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Find Your Book</h2>
                 <p className="text-gray-500 mb-6 text-sm">Search and discover books that spark your interest.</p>
 
-                <div className="flex justify-start mb-6">
-                    <input
-                        type="text"
-                        placeholder="Search books..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full max-w-md p-2 border border-gray-300 rounded-md text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-200 hover:shadow-md"
-                    />
-                </div>
+                <input
+                    type="text"
+                    placeholder="Search books..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full max-w-md p-2 border border-gray-300 rounded-md text-sm shadow-sm focus:ring-2 focus:ring-blue-500 transition-all duration-200 hover:shadow-md mb-6"
+                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map((book) => (
-                            <div 
-                                key={book.id} 
-                                className="bg-white shadow-md rounded-lg p-5 hover:shadow-lg transition-all duration-300 flex flex-col h-full"
-                            >
+                            <div key={book.id} className="bg-white shadow-md rounded-lg p-5 hover:shadow-lg transition-all flex flex-col h-full">
+                                <img src={book.imageUrl} alt={book.title} className="max-h-72 object-cover rounded-md mb-4" />
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">{book.title}</h3>
                                 <p className="text-sm text-gray-500 mb-4">{book.content.substring(0, 100)}...</p>
                                 <div className="mt-auto flex justify-between items-center pt-2">
-                                    <Link 
-                                        to={`/details-book/${book.id}`} 
-                                        className="text-sm text-gray-800 hover:underline transition-all"
-                                    >
+                                    <Link to={`/details-book/${book.id}`} className="text-sm text-gray-800 hover:underline">
                                         Read More →
                                     </Link>
                                     {token && (
-                                        <button 
-                                            onClick={() => handleDelete(book.id)} 
-                                            className="text-sm text-red-500 hover:text-red-700 transition-all"
-                                        >
+                                        <button onClick={() => handleDelete(book.id)} className="text-sm text-red-500 hover:text-red-700">
                                             Delete
                                         </button>
                                     )}
@@ -182,6 +157,16 @@ const HomePage = () => {
                     ) : (
                         <p className="text-gray-500 text-center col-span-full">No books found.</p>
                     )}
+                </div>
+
+                <div className="flex justify-center mt-6">
+                    <button onClick={() => setPage(page - 1)} disabled={page === 1} className="btn btn-secondary mx-2">
+                        Prev
+                    </button>
+                    <span className="px-4 py-2">{page} / {totalPages}</span>
+                    <button onClick={() => setPage(page + 1)} disabled={page === totalPages} className="btn btn-secondary mx-2">
+                        Next
+                    </button>
                 </div>
             </section>
 
